@@ -1,0 +1,7 @@
+[searxng]
+base_url = "https://searx.be"
+auth_type = "none"
+
+# username = "user"
+# password = "pass"
+# token = "token"
