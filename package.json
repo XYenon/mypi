@@ -9,7 +9,8 @@
   "type": "module",
   "pi": {
     "extensions": [
-      "./extensions"
+      "./extensions",
+      "-./extensions/utils.ts"
     ],
     "skills": [
       "./skills"
