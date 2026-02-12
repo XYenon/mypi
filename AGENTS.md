@@ -17,6 +17,7 @@ mypi is a **pi-package** project—an extension system for the pi framework (pi-
 ```
 .
 ├── extensions/              # PI extensions
+│   ├── fetch-url.ts         # URL fetcher
 │   └── searxng-search.ts    # Web search via SearXNG
 ├── .pi/                     # PI agent data
 │   └── todos/
@@ -161,7 +162,9 @@ auth_type = "none"
 ## Notes
 
 - **No tests present**: The project currently has no test files
-- **Single extension**: Only one extension (searxng-search) implemented
+- **Extensions**:
+  - `searxng-search`: Web search via SearXNG (requires configuration)
+  - `fetch-url`: URL fetcher with smart fallback (Local HTML/RSC -> Jina Reader)
 - **Configuration required**: SearXNG base URL must be configured before use
 - **Error handling**: Uses try/catch with console.warn for config parsing failures
 - **PI framework**: This package is designed to run within the PI coding agent environment

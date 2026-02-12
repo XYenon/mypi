@@ -7,12 +7,7 @@ import toml from 'toml';
 import { URL } from 'url';
 import { ExtensionAPI } from '@mariozechner/pi-coding-agent';
 import { Type } from '@sinclair/typebox';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
-
-const USER_AGENT = `${pkg.name}/${pkg.version} (+https://github.com/XYenon/mypi)`;
+import { USER_AGENT } from './utils.js';
 
 interface SearxngConfig {
   baseUrl: string;
