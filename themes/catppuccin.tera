@@ -1,0 +1,65 @@
+---
+whiskers:
+  version: "^2.5.1"
+  matrix:
+    - flavor
+    - accent
+  filename: "catppuccin-{{ flavor.identifier }}-{{ accent }}.json"
+---
+{
+  "$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+  "name": "catppuccin-{{ flavor.identifier }}-{{ accent }}",
+  "colors": {
+    "accent": "#{{ flavor.colors[accent].hex }}",
+    "border": "#{{ overlay0.hex }}",
+    "borderAccent": "#{{ flavor.colors[accent].hex }}",
+    "borderMuted": "#{{ surface0.hex }}",
+    "success": "#{{ green.hex }}",
+    "error": "#{{ red.hex }}",
+    "warning": "#{{ yellow.hex }}",
+    "muted": "#{{ subtext0.hex }}",
+    "dim": "#{{ overlay1.hex }}",
+    "text": "#{{ text.hex }}",
+    "thinkingText": "#{{ subtext0.hex }}",
+    "selectedBg": "#{{ surface1.hex }}",
+    "userMessageBg": "#{{ surface0.hex }}",
+    "userMessageText": "#{{ text.hex }}",
+    "customMessageBg": "#{{ mantle.hex }}",
+    "customMessageText": "#{{ text.hex }}",
+    "customMessageLabel": "#{{ flavor.colors[accent].hex }}",
+    "toolPendingBg": "#{{ mantle.hex }}",
+    "toolSuccessBg": "#{{ mantle.hex }}",
+    "toolErrorBg": "#{{ mantle.hex }}",
+    "toolTitle": "#{{ blue.hex }}",
+    "toolOutput": "#{{ text.hex }}",
+    "mdHeading": "#{{ blue.hex }}",
+    "mdLink": "#{{ blue.hex }}",
+    "mdLinkUrl": "#{{ rosewater.hex }}",
+    "mdCode": "#{{ peach.hex }}",
+    "mdCodeBlock": "#{{ text.hex }}",
+    "mdCodeBlockBorder": "#{{ surface1.hex }}",
+    "mdQuote": "#{{ subtext0.hex }}",
+    "mdQuoteBorder": "#{{ overlay0.hex }}",
+    "mdHr": "#{{ surface1.hex }}",
+    "mdListBullet": "#{{ teal.hex }}",
+    "toolDiffAdded": "#{{ green.hex }}",
+    "toolDiffRemoved": "#{{ red.hex }}",
+    "toolDiffContext": "#{{ overlay0.hex }}",
+    "syntaxComment": "#{{ overlay2.hex }}",
+    "syntaxKeyword": "#{{ mauve.hex }}",
+    "syntaxFunction": "#{{ blue.hex }}",
+    "syntaxVariable": "#{{ text.hex }}",
+    "syntaxString": "#{{ green.hex }}",
+    "syntaxNumber": "#{{ peach.hex }}",
+    "syntaxType": "#{{ yellow.hex }}",
+    "syntaxOperator": "#{{ sky.hex }}",
+    "syntaxPunctuation": "#{{ overlay2.hex }}",
+    "thinkingOff": "#{{ surface0.hex }}",
+    "thinkingMinimal": "#{{ surface1.hex }}",
+    "thinkingLow": "#{{ blue.hex }}",
+    "thinkingMedium": "#{{ mauve.hex }}",
+    "thinkingHigh": "#{{ peach.hex }}",
+    "thinkingXhigh": "#{{ red.hex }}",
+    "bashMode": "#{{ peach.hex }}"
+  }
+}
