@@ -52,7 +52,7 @@
     "jsdom": "^29.0.2",
     "mitsupi": "^1.6.0",
     "pi-mcp-adapter": "^2.4.2",
-    "pi-powerline-footer": "^0.4.17",
+    "pi-powerline-footer": "^0.4.18",
     "pi-rewind-hook": "^1.8.3",
     "pi-skill-palette": "^1.1.0",
     "pi-subagents": "^0.18.0",
