@@ -10,10 +10,16 @@
   "pi": {
     "extensions": [
       "./extensions",
-      "-./extensions/utils.ts"
+      "-./extensions/utils.ts",
+      "node_modules/pi-mcp-adapter/index.ts",
+      "node_modules/pi-powerline-footer/index.ts",
+      "node_modules/pi-rewind-hook/index.ts",
+      "node_modules/pi-skill-palette/index.ts",
+      "node_modules/pi-subagents/index.ts"
     ],
     "skills": [
-      "./skills"
+      "./skills",
+      "node_modules/pi-subagents/skills"
     ],
     "prompts": [
       "./prompts"
@@ -22,6 +28,13 @@
       "./themes"
     ]
   },
+  "bundledDependencies": [
+    "pi-mcp-adapter",
+    "pi-powerline-footer",
+    "pi-rewind-hook",
+    "pi-skill-palette",
+    "pi-subagents"
+  ],
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -32,6 +45,11 @@
     "@types/jsdom": "^27.0.0",
     "@types/turndown": "^5.0.6",
     "jsdom": "^28.0.0",
+    "pi-mcp-adapter": "^2.4.2",
+    "pi-powerline-footer": "^0.4.17",
+    "pi-rewind-hook": "^1.8.3",
+    "pi-skill-palette": "^1.1.0",
+    "pi-subagents": "^0.18.0",
     "toml": "^3.0.0",
     "turndown": "^7.2.2"
   },
