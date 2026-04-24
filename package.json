@@ -42,16 +42,16 @@
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
-    "@types/jsdom": "^27.0.0",
+    "@types/jsdom": "^28.0.1",
     "@types/turndown": "^5.0.6",
-    "jsdom": "^28.0.0",
+    "jsdom": "^29.0.2",
     "pi-mcp-adapter": "^2.4.2",
     "pi-powerline-footer": "^0.4.17",
     "pi-rewind-hook": "^1.8.3",
     "pi-skill-palette": "^1.1.0",
     "pi-subagents": "^0.18.0",
-    "toml": "^3.0.0",
-    "turndown": "^7.2.2"
+    "toml": "^4.1.1",
+    "turndown": "^7.2.4"
   },
   "peerDependencies": {
     "@mariozechner/pi-ai": "*",
@@ -59,15 +59,15 @@
     "@sinclair/typebox": "*"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@typescript-eslint/eslint-plugin": "^8.55.0",
-    "@typescript-eslint/parser": "^8.55.0",
-    "eslint": "^9.39.2",
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0"
   }
 }
