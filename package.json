@@ -11,6 +11,10 @@
     "extensions": [
       "./extensions",
       "-./extensions/utils.ts",
+      "node_modules/mitsupi/extensions/context.ts",
+      "node_modules/mitsupi/extensions/multi-edit.ts",
+      "node_modules/mitsupi/extensions/notify.ts",
+      "node_modules/mitsupi/extensions/review.ts",
       "node_modules/pi-mcp-adapter/index.ts",
       "node_modules/pi-powerline-footer/index.ts",
       "node_modules/pi-rewind-hook/index.ts",
@@ -29,6 +33,7 @@
     ]
   },
   "bundledDependencies": [
+    "mitsupi",
     "pi-mcp-adapter",
     "pi-powerline-footer",
     "pi-rewind-hook",
@@ -45,6 +50,7 @@
     "@types/jsdom": "^28.0.1",
     "@types/turndown": "^5.0.6",
     "jsdom": "^29.0.2",
+    "mitsupi": "^1.6.0",
     "pi-mcp-adapter": "^2.4.2",
     "pi-powerline-footer": "^0.4.17",
     "pi-rewind-hook": "^1.8.3",
