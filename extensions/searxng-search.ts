@@ -5,8 +5,15 @@ import * as path from 'path';
 import * as os from 'os';
 import toml from 'toml';
 import { URL } from 'url';
-import { ExtensionAPI } from '@mariozechner/pi-coding-agent';
-import { Type } from '@sinclair/typebox';
+import {
+  ExtensionAPI,
+  truncateHead,
+  DEFAULT_MAX_BYTES,
+  DEFAULT_MAX_LINES,
+  formatSize,
+} from '@mariozechner/pi-coding-agent';
+import { Type } from 'typebox';
+import { StringEnum } from '@mariozechner/pi-ai';
 import { USER_AGENT } from './utils.js';
 
 interface SearxngConfig {
@@ -63,6 +70,7 @@ export default function (pi: ExtensionAPI) {
     label: 'Web Search (SearXNG)',
     description: 'Search the web using a SearXNG instance. Returns search results with titles, URLs, and snippets.',
 
+    promptSnippet: 'Search the web using SearXNG for current information',
     parameters: Type.Object({
       query: Type.String({ description: 'The search query' }),
       categories: Type.Optional(
@@ -70,7 +78,7 @@ export default function (pi: ExtensionAPI) {
       ),
       language: Type.Optional(Type.String({ description: 'Search language (e.g., en-US, de-DE)' })),
       time_range: Type.Optional(
-        Type.Union([Type.Literal('day'), Type.Literal('week'), Type.Literal('month'), Type.Literal('year')], {
+        StringEnum(['day', 'week', 'month', 'year'] as const, {
           description: 'Time range for results',
         }),
       ),
@@ -79,11 +87,7 @@ export default function (pi: ExtensionAPI) {
 
     async execute(toolCallId, params, signal, _onUpdate, _ctx) {
       if (!config.baseUrl) {
-        return {
-          content: [{ type: 'text', text: 'Error: SearXNG base URL is not configured. Please check mypi.toml.' }],
-          isError: true,
-          details: {},
-        };
+        throw new Error('SearXNG base URL is not configured. Please check mypi.toml.');
       }
       const { query, categories, language, time_range, limit } = params;
       const searchUrl = new URL('search', config.baseUrl);
@@ -100,7 +104,7 @@ export default function (pi: ExtensionAPI) {
       }
 
       if (time_range) {
-        searchUrl.searchParams.append('time_range', time_range as string);
+        searchUrl.searchParams.append('time_range', time_range);
       }
 
       interface RequestHeaders {
@@ -124,7 +128,7 @@ export default function (pi: ExtensionAPI) {
         (requestOptions.headers as RequestHeaders)['Authorization'] = `Bearer ${config.token}`;
       }
 
-      return new Promise((resolve, reject) => {
+      const data = await new Promise<string>((resolve, reject) => {
         const client = searchUrl.protocol === 'https:' ? https : http;
 
         const req = client.request(searchUrl.toString(), requestOptions, (res) => {
@@ -136,90 +140,7 @@ export default function (pi: ExtensionAPI) {
 
           res.on('end', () => {
             if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-              try {
-                const jsonResponse = JSON.parse(data);
-
-                interface Answer {
-                  answer: string;
-                  url: string;
-                  title: string;
-                }
-
-                interface InfoboxAttribute {
-                  label: string;
-                  value: string;
-                }
-
-                interface InfoboxUrl {
-                  title: string;
-                  url: string;
-                }
-
-                interface Infobox {
-                  infobox: string;
-                  content: string;
-                  attributes: InfoboxAttribute[];
-                  urls: InfoboxUrl[];
-                }
-
-                interface SearchResult {
-                  title: string;
-                  url: string;
-                  content: string;
-                  publishedDate: string;
-                  engine: string;
-                  score: number;
-                }
-
-                // Extract answers (direct answers like from Wikipedia)
-                const answers = (jsonResponse.answers || []).map((a: Answer) => ({
-                  answer: a.answer,
-                  url: a.url,
-                  title: a.title || 'Answer',
-                }));
-
-                // Extract infoboxes (structured data)
-                const infoboxes = (jsonResponse.infoboxes || []).map((i: Infobox) => ({
-                  title: i.infobox || 'Infobox',
-                  content: i.content,
-                  attributes: (i.attributes || []).map((attr: InfoboxAttribute) => `${attr.label}: ${attr.value}`),
-                  urls: (i.urls || []).map((u: InfoboxUrl) => ({ title: u.title, url: u.url })),
-                }));
-
-                // Extract suggestions
-                const suggestions = (jsonResponse.suggestions || []).slice(0, 8);
-
-                // Format search results
-                const formattedResults = (jsonResponse.results || [])
-                  .slice(0, limit || 10)
-                  .map((result: SearchResult) => ({
-                    title: result.title,
-                    url: result.url,
-                    content: result.content,
-                    publishedDate: result.publishedDate,
-                    engine: result.engine,
-                    score: result.score,
-                  }));
-
-                const finalResponse = {
-                  query: jsonResponse.query,
-                  answers: answers.length > 0 ? answers : undefined,
-                  infoboxes: infoboxes.length > 0 ? infoboxes : undefined,
-                  results: formattedResults,
-                  suggestions: suggestions.length > 0 ? suggestions : undefined,
-                };
-
-                resolve({
-                  content: [{ type: 'text', text: JSON.stringify(finalResponse, null, 2) }],
-                  details: {
-                    query: jsonResponse.query,
-                    number_of_results: jsonResponse.number_of_results,
-                    ...finalResponse,
-                  },
-                });
-              } catch (e) {
-                reject(new Error(`Failed to parse SearXNG response: ${e}`));
-              }
+              resolve(data);
             } else {
               reject(new Error(`SearXNG request failed with status code ${res.statusCode}: ${data}`));
             }
@@ -237,6 +158,104 @@ export default function (pi: ExtensionAPI) {
 
         req.end();
       });
+
+      let jsonResponse: Record<string, unknown>;
+      try {
+        jsonResponse = JSON.parse(data);
+      } catch (e) {
+        throw new Error(`Failed to parse SearXNG response: ${e}`, { cause: e });
+      }
+
+      interface Answer {
+        answer: string;
+        url: string;
+        title: string;
+      }
+
+      interface InfoboxAttribute {
+        label: string;
+        value: string;
+      }
+
+      interface InfoboxUrl {
+        title: string;
+        url: string;
+      }
+
+      interface Infobox {
+        infobox: string;
+        content: string;
+        attributes: InfoboxAttribute[];
+        urls: InfoboxUrl[];
+      }
+
+      interface SearchResult {
+        title: string;
+        url: string;
+        content: string;
+        publishedDate: string;
+        engine: string;
+        score: number;
+      }
+
+      // Extract answers (direct answers like from Wikipedia)
+      const answers = ((jsonResponse.answers as Answer[]) || []).map((a) => ({
+        answer: a.answer,
+        url: a.url,
+        title: a.title || 'Answer',
+      }));
+
+      // Extract infoboxes (structured data)
+      const infoboxes = ((jsonResponse.infoboxes as Infobox[]) || []).map((i) => ({
+        title: i.infobox || 'Infobox',
+        content: i.content,
+        attributes: (i.attributes || []).map((attr) => `${attr.label}: ${attr.value}`),
+        urls: (i.urls || []).map((u) => ({ title: u.title, url: u.url })),
+      }));
+
+      // Extract suggestions
+      const suggestions = ((jsonResponse.suggestions as string[]) || []).slice(0, 8);
+
+      // Format search results
+      const formattedResults = ((jsonResponse.results as SearchResult[]) || []).slice(0, limit || 10).map((result) => ({
+        title: result.title,
+        url: result.url,
+        content: result.content,
+        publishedDate: result.publishedDate,
+        engine: result.engine,
+        score: result.score,
+      }));
+
+      const finalResponse = {
+        query: jsonResponse.query,
+        answers: answers.length > 0 ? answers : undefined,
+        infoboxes: infoboxes.length > 0 ? infoboxes : undefined,
+        results: formattedResults,
+        suggestions: suggestions.length > 0 ? suggestions : undefined,
+      };
+
+      let text = JSON.stringify(finalResponse, null, 2);
+
+      // Truncate output to avoid overwhelming the LLM context
+      const truncation = truncateHead(text, {
+        maxLines: DEFAULT_MAX_LINES,
+        maxBytes: DEFAULT_MAX_BYTES,
+      });
+
+      if (truncation.truncated) {
+        text =
+          truncation.content +
+          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).]`;
+      }
+
+      return {
+        content: [{ type: 'text', text }],
+        details: {
+          query: jsonResponse.query,
+          number_of_results: jsonResponse.number_of_results,
+          ...finalResponse,
+        },
+      };
     },
   });
 }

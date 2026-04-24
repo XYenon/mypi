@@ -1,8 +1,14 @@
 import * as https from 'https';
 import * as http from 'http';
 import { URL } from 'url';
-import { ExtensionAPI } from '@mariozechner/pi-coding-agent';
-import { Type } from '@sinclair/typebox';
+import {
+  ExtensionAPI,
+  truncateHead,
+  DEFAULT_MAX_BYTES,
+  DEFAULT_MAX_LINES,
+  formatSize,
+} from '@mariozechner/pi-coding-agent';
+import { Type } from 'typebox';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import TurndownService from 'turndown';
@@ -128,6 +134,7 @@ export default function (pi: ExtensionAPI) {
     label: 'Fetch URL (Smart)',
     description:
       'Fetch a URL and convert it to Markdown. Tries local HTML parsing (Readability), then RSC parsing, then falls back to Jina Reader. Returns the content directly.',
+    promptSnippet: 'Fetch a webpage and convert it to readable Markdown',
     parameters: Type.Object({
       url: Type.String({ description: 'The URL to fetch' }),
     }),
@@ -135,75 +142,63 @@ export default function (pi: ExtensionAPI) {
       const { url } = params;
       const turndownService = new TurndownService();
 
-      try {
-        // 1. Try local fetch
-        const { data, contentType, statusCode } = await fetchContent(url, {}, signal);
+      // 1. Try local fetch
+      const { data, contentType, statusCode } = await fetchContent(url, {}, signal);
 
-        // Check for blocking/challenges
-        const lowerData = data.toLowerCase();
-        const isChallenge =
-          statusCode === 403 ||
-          statusCode === 429 ||
-          statusCode === 503 ||
-          lowerData.includes('challenge') ||
-          lowerData.includes('captcha') ||
-          lowerData.includes('cloudflare') ||
-          lowerData.includes('just a moment...');
+      // Check for blocking/challenges
+      const lowerData = data.toLowerCase();
+      const isChallenge =
+        statusCode === 403 ||
+        statusCode === 429 ||
+        statusCode === 503 ||
+        lowerData.includes('challenge') ||
+        lowerData.includes('captcha') ||
+        lowerData.includes('cloudflare') ||
+        lowerData.includes('just a moment...');
 
-        if (isChallenge) {
-          // If blocked locally, try Jina immediately
-          // console.log('Blocked locally, trying Jina...');
-        } else if (statusCode >= 200 && statusCode < 300) {
-          // 2. Process based on Content-Type
-          if (
-            contentType.includes('application/json') ||
-            contentType.includes('text/plain') ||
-            contentType.includes('text/markdown')
-          ) {
-            return { content: [{ type: 'text', text: data }] };
+      let resultText: string | undefined;
+
+      if (!isChallenge && statusCode >= 200 && statusCode < 300) {
+        // 2. Process based on Content-Type
+        if (
+          contentType.includes('application/json') ||
+          contentType.includes('text/plain') ||
+          contentType.includes('text/markdown')
+        ) {
+          resultText = data;
+        } else if (contentType.includes('text/x-component')) {
+          const rscText = parseRsc(data);
+          if (rscText.length > 50) {
+            resultText = rscText;
           }
+        } else if (contentType.includes('text/html')) {
+          // 3. HTML -> Readability
+          const doc = new JSDOM(data, { url });
+          const reader = new Readability(doc.window.document);
+          const article = reader.parse();
 
-          if (contentType.includes('text/x-component')) {
-            const rscText = parseRsc(data);
-            if (rscText.length > 50) {
-              return { content: [{ type: 'text', text: rscText }] };
-            }
-          }
-
-          if (contentType.includes('text/html')) {
-            // 3. HTML -> Readability
-            const doc = new JSDOM(data, { url });
-            const reader = new Readability(doc.window.document);
-            const article = reader.parse();
-
-            if (article && article.content && article.content.length > 100) {
-              // Convert to Markdown
-              const markdown = turndownService.turndown(article.content);
-              return {
-                content: [
-                  {
-                    type: 'text',
-                    text: `# ${article.title}\n\n${markdown}`,
-                  },
-                ],
-              };
-            }
-
+          if (article && article.content && article.content.length > 100) {
+            // Convert to Markdown
+            const markdown = turndownService.turndown(article.content);
+            resultText = `# ${article.title}\n\n${markdown}`;
+          } else {
             // 4. HTML -> Try to find RSC payload in scripts?
             const scripts = doc.window.document.querySelectorAll('script');
             for (const script of scripts) {
               if (script.textContent && script.textContent.includes('self.__next_f.push')) {
                 const rscText = parseRsc(script.textContent);
                 if (rscText.length > 50) {
-                  return { content: [{ type: 'text', text: rscText }] };
+                  resultText = rscText;
+                  break;
                 }
               }
             }
           }
         }
+      }
 
-        // 5. Fallback: Jina Reader
-        // console.log('Falling back to Jina Reader...');
+      // 5. Fallback: Jina Reader
+      if (resultText === undefined) {
         const jinaUrl = `https://r.jina.ai/${url}`;
         const jinaResult = await fetchContent(jinaUrl, {}, signal);
 
@@ -216,40 +211,32 @@ export default function (pi: ExtensionAPI) {
             jinaLower.includes('cloudflare') ||
             jinaLower.includes('just a moment...')
           ) {
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: `Unable to fetch content due to access restrictions (Jina Reader also blocked).\nPlease use the "agent-browser" tool to access this page.`,
-                },
-              ],
-              isError: true,
-            };
+            throw new Error(
+              'Unable to fetch content due to access restrictions (Jina Reader also blocked). Please use the "agent-browser" tool to access this page.',
+            );
           }
 
-          return { content: [{ type: 'text', text: jinaResult.data }] };
+          resultText = jinaResult.data;
         } else {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: `Failed to fetch content via local parser and Jina Reader (Status: ${jinaResult.statusCode}).\nPlease use the "agent-browser" tool.`,
-              },
-            ],
-            isError: true,
-          };
+          throw new Error(
+            `Failed to fetch content via local parser and Jina Reader (Status: ${jinaResult.statusCode}). Please use the "agent-browser" tool.`,
+          );
         }
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Error fetching URL: ${error instanceof Error ? error.message : String(error)}\n\nPlease try using the "agent-browser" tool to access this page.`,
-            },
-          ],
-          isError: true,
-        };
       }
+
+      // Truncate output to avoid overwhelming the LLM context
+      const truncation = truncateHead(resultText, {
+        maxLines: DEFAULT_MAX_LINES,
+        maxBytes: DEFAULT_MAX_BYTES,
+      });
+
+      if (truncation.truncated) {
+        resultText =
+          truncation.content +
+          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).]`;
+      }
+
+      return { content: [{ type: 'text', text: resultText }] };
     },
   });
 }

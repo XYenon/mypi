@@ -17,9 +17,6 @@ importers:
       '@mozilla/readability':
         specifier: ^0.6.0
         version: 0.6.0
-      '@sinclair/typebox':
-        specifier: '*'
-        version: 0.34.48
       '@types/jsdom':
         specifier: ^28.0.1
         version: 28.0.1
@@ -36,8 +33,8 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2(zod@3.25.76)
       pi-powerline-footer:
-        specifier: ^0.4.17
-        version: 0.4.17
+        specifier: ^0.4.18
+        version: 0.4.18
       pi-rewind-hook:
         specifier: ^1.8.3
         version: 1.8.3
@@ -53,6 +50,9 @@ importers:
       turndown:
         specifier: ^7.2.4
         version: 7.2.4
+      typebox:
+        specifier: '*'
+        version: 1.1.33
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -1864,8 +1864,8 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  pi-powerline-footer@0.4.17:
-    resolution: {integrity: sha512-WZx1hIRc5p3sBa6YV96+1bScgv1+lGHNirdK7A2qOUtrh3CfbDv0++6YY9hg/PPgCdPD7InFEdqYEqygOfPqdg==}
+  pi-powerline-footer@0.4.18:
+    resolution: {integrity: sha512-0/mUcUZwwoPOnaDKQdURdl6099+zq5YrMVK7wg9wg+S0yaQmZHHdhF4QElGwyPiRIisondaNEkgmz8yvr6WjlQ==}
 
   pi-rewind-hook@1.8.3:
     resolution: {integrity: sha512-Fl3h8nhnUglbOshpo1OeBfZyB2yQeVBdbpJZx0bY0X9JUWutrFTygs6rVnhs7VQAZWnW5bR+cn/LIGdccY+dkQ==}
@@ -4458,7 +4458,7 @@ snapshots:
       - react-dom
       - supports-color
 
-  pi-powerline-footer@0.4.17: {}
+  pi-powerline-footer@0.4.18: {}
 
   pi-rewind-hook@1.8.3: {}
 
