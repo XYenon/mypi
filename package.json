@@ -29,7 +29,8 @@
       "./prompts"
     ],
     "themes": [
-      "./themes"
+      "./themes",
+      "node_modules/pi-catppuccin/themes"
     ]
   },
   "bundledDependencies": [
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
+    "pi-catppuccin": "github:XYenon/catppuccin-pi-coding-agent",
     "@types/jsdom": "^28.0.1",
     "@types/turndown": "^5.0.6",
     "jsdom": "^29.0.2",
