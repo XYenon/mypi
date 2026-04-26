@@ -33,20 +33,20 @@ importers:
         specifier: github:XYenon/catppuccin-pi-coding-agent
         version: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e
       pi-mcp-adapter:
-        specifier: ^2.5.0
-        version: 2.5.0(ws@8.20.0)(zod@4.3.6)
+        specifier: ^2.5.1
+        version: 2.5.1(ws@8.20.0)(zod@4.3.6)
       pi-powerline-footer:
-        specifier: ^0.4.18
-        version: 0.4.18
+        specifier: ^0.4.19
+        version: 0.4.19
       pi-rewind-hook:
-        specifier: ^1.8.3
-        version: 1.8.3
+        specifier: ^1.8.4
+        version: 1.8.4
       pi-skill-palette:
         specifier: ^1.1.0
         version: 1.1.0
       pi-subagents:
-        specifier: ^0.18.0
-        version: 0.18.0(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)
+        specifier: ^0.18.1
+        version: 0.18.1(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)
       toml:
         specifier: ^4.1.1
         version: 4.1.1
@@ -571,30 +571,35 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@mariozechner/clipboard-linux-arm64-musl@0.3.3':
     resolution: {integrity: sha512-o1paj2+zmAQ/LaPS85XJCxhNowNQpxYM2cGY6pWvB5Kqmz6hZjl6CzDg5tbf1hZkn/Em6jpOaE2UtMxKdELBDA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@mariozechner/clipboard-linux-riscv64-gnu@0.3.3':
     resolution: {integrity: sha512-dkEhE4ekePJwMbBq9HP1//CFMNmDzA/iV9AXqBfvL5CWmmDIRXqh4A3YZt3tWO/HdMerX+xNCEiR7WiOsIG+UA==}
     engines: {node: '>= 10'}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@mariozechner/clipboard-linux-x64-gnu@0.3.3':
     resolution: {integrity: sha512-lT2yANtTLlEtFBIH3uGoRa/CQas/eBoLNi3qr9axQFoRgF4RGPSJ66yHOSnMECBneTIb1Iqv3UxokTfX27CdoQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@mariozechner/clipboard-linux-x64-musl@0.3.3':
     resolution: {integrity: sha512-saq/MCB0QHK/7ZZLjAZ0QkbY944dyjOsur8gneGCfMitt+GOiE1CU4OUipHC4b6x8UDY9bRLsR4aBaxu22OFPA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@mariozechner/clipboard-win32-arm64-msvc@0.3.3':
     resolution: {integrity: sha512-cGuvSj0/2X2w983yEcKw+i+r1EBej6ZZIN+fXG3eY2G/HaIQpbXpLvMxKyZ9LKtbZx+Z6q/gELEoSBMLML6BaQ==}
@@ -1839,23 +1844,23 @@ packages:
     resolution: {tarball: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e}
     version: 0.1.0
 
-  pi-mcp-adapter@2.5.0:
-    resolution: {integrity: sha512-IHl/NK7ZdYzEAZEFObTuCfgA9FX9LlbIre9bPn3kxvgFuGynn/ieW8VOmxK9iYRBvhvSjgYxZELmrZgoPrOfCw==}
+  pi-mcp-adapter@2.5.1:
+    resolution: {integrity: sha512-5n7oOJl4QkwiBtu5ti90wp63o1PYKCIgHlPiVeI8vmtz/JxA3QXYf+BvqLUZY1PAeRNQVgJs2sRLLrRZlD+RWA==}
     hasBin: true
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  pi-powerline-footer@0.4.18:
-    resolution: {integrity: sha512-0/mUcUZwwoPOnaDKQdURdl6099+zq5YrMVK7wg9wg+S0yaQmZHHdhF4QElGwyPiRIisondaNEkgmz8yvr6WjlQ==}
+  pi-powerline-footer@0.4.19:
+    resolution: {integrity: sha512-mDTq+Tm9svzsjKid+4j9jk/tZE3VBBMTlz3CcrdhdNvaRzSSE0qZiUdZ4cA6LzxRcfkbl3r4WleCD7n2WQucqQ==}
 
-  pi-rewind-hook@1.8.3:
-    resolution: {integrity: sha512-Fl3h8nhnUglbOshpo1OeBfZyB2yQeVBdbpJZx0bY0X9JUWutrFTygs6rVnhs7VQAZWnW5bR+cn/LIGdccY+dkQ==}
+  pi-rewind-hook@1.8.4:
+    resolution: {integrity: sha512-M2V/8pR62pdV/el8hUULpb6abty8i/Z6+CidfiJ/LB00aQ3vaMk+8wvoz/XaoGrW8vLhqwJrdY/Kwaac2eOoMg==}
 
   pi-skill-palette@1.1.0:
     resolution: {integrity: sha512-z2ujY9bfTwM3FKSkYqi1j17YLgjtJwHCL3RjQZqYD2QaN2Eu8S4fVnmBhrylLAxkXNW610p2JAWrPBqf7KMrzQ==}
 
-  pi-subagents@0.18.0:
-    resolution: {integrity: sha512-tAgUx04AUzmcspEK9W8wnf7JWLfGMYMUJ6NYYCV4vsUm7wy6hrgesMHS/QUtZPJ2+MI/q8qFbzQu2YNG6+H6kA==}
+  pi-subagents@0.18.1:
+    resolution: {integrity: sha512-o5aULiNP45M0022Y/m6w3BYyoWtSYT20zNSV+S86ZlHCH9y1EP8SeYdIVkocKm2WSALB8+TwOrw758vxl/SDhw==}
     hasBin: true
     peerDependencies:
       '@mariozechner/pi-agent-core': '*'
@@ -4404,7 +4409,7 @@ snapshots:
 
   pi-catppuccin@https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e: {}
 
-  pi-mcp-adapter@2.5.0(ws@8.20.0)(zod@4.3.6):
+  pi-mcp-adapter@2.5.1(ws@8.20.0)(zod@4.3.6):
     dependencies:
       '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
       '@modelcontextprotocol/ext-apps': 1.7.0(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(zod@4.3.6)
@@ -4422,13 +4427,13 @@ snapshots:
       - utf-8-validate
       - ws
 
-  pi-powerline-footer@0.4.18: {}
+  pi-powerline-footer@0.4.19: {}
 
-  pi-rewind-hook@1.8.3: {}
+  pi-rewind-hook@1.8.4: {}
 
   pi-skill-palette@1.1.0: {}
 
-  pi-subagents@0.18.0(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1):
+  pi-subagents@0.18.1(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1):
     dependencies:
       '@mariozechner/pi-agent-core': 0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
