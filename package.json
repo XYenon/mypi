@@ -50,7 +50,7 @@
     "@mozilla/readability": "^0.6.0",
     "@types/jsdom": "^28.0.1",
     "@types/turndown": "^5.0.6",
-    "jsdom": "^29.0.2",
+    "jsdom": "^29.1.0",
     "mitsupi": "^1.6.0",
     "pi-catppuccin": "github:XYenon/catppuccin-pi-coding-agent",
     "pi-mcp-adapter": "^2.5.1",
