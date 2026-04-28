@@ -1,6 +1,7 @@
 import * as https from 'https';
 import * as http from 'http';
 import * as fs from 'fs';
+import { mkdtemp, writeFile } from 'node:fs/promises';
 import * as path from 'path';
 import * as os from 'os';
 import toml from 'toml';
@@ -11,6 +12,7 @@ import {
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
   formatSize,
+  withFileMutationQueue,
   keyHint,
 } from '@mariozechner/pi-coding-agent';
 import { Type } from 'typebox';
@@ -90,10 +92,27 @@ interface WebSearchToolDetails {
   infoboxes?: WebSearchInfobox[];
   results: WebSearchResultItem[];
   suggestions?: string[];
+  fullOutputPath?: string;
+  truncation?: {
+    truncated: boolean;
+    outputLines: number;
+    totalLines: number;
+    outputBytes: number;
+    totalBytes: number;
+  };
 }
 
 function formatCount(count: number, singular: string, plural: string = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : plural}`;
+}
+
+async function writeFullOutput(prefix: string, content: string, filename: string): Promise<string> {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), prefix));
+  const tempFile = path.join(tempDir, filename);
+  await withFileMutationQueue(tempFile, async () => {
+    await writeFile(tempFile, content, 'utf8');
+  });
+  return tempFile;
 }
 
 export default function (pi: ExtensionAPI) {
@@ -140,7 +159,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: 'web_search',
     label: 'Web Search (SearXNG)',
-    description: 'Search the web using a SearXNG instance. Returns search results with titles, URLs, and snippets.',
+    description: `Search the web using a SearXNG instance. Returns search results with titles, URLs, and snippets. Output is truncated to ${DEFAULT_MAX_LINES} lines or ${formatSize(DEFAULT_MAX_BYTES)} (whichever is hit first). If truncated, the full output is saved to a temp file and the path is returned.`,
 
     promptSnippet: 'Search the web using SearXNG for current information',
     parameters: Type.Object({
@@ -276,27 +295,49 @@ export default function (pi: ExtensionAPI) {
         suggestions: suggestions.length > 0 ? suggestions : undefined,
       };
 
-      let text = JSON.stringify(finalResponse, null, 2);
+      const fullText = JSON.stringify(finalResponse, null, 2);
 
       // Truncate output to avoid overwhelming the LLM context
-      const truncation = truncateHead(text, {
+      const truncation = truncateHead(fullText, {
         maxLines: DEFAULT_MAX_LINES,
         maxBytes: DEFAULT_MAX_BYTES,
       });
 
+      let text = truncation.content;
+      let fullOutputPath: string | undefined;
+
       if (truncation.truncated) {
+        try {
+          fullOutputPath = await writeFullOutput('pi-web-search-', fullText, 'output.json');
+        } catch (e) {
+          console.warn('Failed to write full web_search output to temp file:', e);
+        }
+
+        const pathNote = fullOutputPath
+          ? ` Full output saved to: ${fullOutputPath}`
+          : ' Full output could not be saved.';
+
         text =
           truncation.content +
-          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).]`;
+          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).${pathNote}]`;
       }
 
       return {
         content: [{ type: 'text', text }],
         details: {
-          query: finalResponse.query,
           number_of_results:
             typeof jsonResponse.number_of_results === 'number' ? jsonResponse.number_of_results : undefined,
           ...finalResponse,
+          fullOutputPath,
+          truncation: truncation.truncated
+            ? {
+                truncated: true,
+                outputLines: truncation.outputLines,
+                totalLines: truncation.totalLines,
+                outputBytes: truncation.outputBytes,
+                totalBytes: truncation.totalBytes,
+              }
+            : undefined,
         },
       };
     },
@@ -364,7 +405,11 @@ export default function (pi: ExtensionAPI) {
       if (typeof details.number_of_results === 'number' && details.number_of_results > results.length) {
         summary.push(`~${details.number_of_results} total`);
       }
-      lines.push(theme.fg('success', summary.join(' • ')));
+      let summaryLine = theme.fg('success', summary.join(' • '));
+      if (details.truncation?.truncated) {
+        summaryLine += theme.fg('warning', ' • truncated');
+      }
+      lines.push(summaryLine);
 
       if (answers.length > 0) {
         const firstAnswer = answers[0]!;
@@ -423,6 +468,11 @@ export default function (pi: ExtensionAPI) {
       if (expanded && suggestions.length > 0) {
         lines.push('');
         lines.push(theme.fg('muted', `Suggestions: ${suggestions.map((item) => truncateText(item, 32)).join(' • ')}`));
+      }
+
+      if (details.fullOutputPath) {
+        lines.push('');
+        lines.push(theme.fg('dim', `Full output: ${details.fullOutputPath}`));
       }
 
       text.setText(lines.join('\n'));

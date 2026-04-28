@@ -1,5 +1,8 @@
 import * as https from 'https';
 import * as http from 'http';
+import { mkdtemp, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { URL } from 'url';
 import {
   ExtensionAPI,
@@ -7,6 +10,7 @@ import {
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
   formatSize,
+  withFileMutationQueue,
   keyHint,
 } from '@mariozechner/pi-coding-agent';
 import { Type } from 'typebox';
@@ -40,6 +44,7 @@ interface FetchUrlToolDetails {
   contentType: string;
   statusCode: number;
   contentLength: number;
+  fullOutputPath?: string;
   truncation?: {
     truncated: boolean;
     outputLines: number;
@@ -47,6 +52,15 @@ interface FetchUrlToolDetails {
     outputBytes: number;
     totalBytes: number;
   };
+}
+
+async function writeFullOutput(prefix: string, content: string, filename: string): Promise<string> {
+  const tempDir = await mkdtemp(join(tmpdir(), prefix));
+  const tempFile = join(tempDir, filename);
+  await withFileMutationQueue(tempFile, async () => {
+    await writeFile(tempFile, content, 'utf8');
+  });
+  return tempFile;
 }
 
 function getSourceLabel(source: FetchUrlSource): string {
@@ -202,8 +216,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: 'fetch_url',
     label: 'Fetch URL (Smart)',
-    description:
-      'Fetch a URL and convert it to Markdown. Tries local HTML parsing (Readability), then RSC parsing, then falls back to Jina Reader. Returns the content directly.',
+    description: `Fetch a URL and convert it to Markdown. Tries local HTML parsing (Readability), then RSC parsing, then falls back to Jina Reader. Output is truncated to ${DEFAULT_MAX_LINES} lines or ${formatSize(DEFAULT_MAX_BYTES)} (whichever is hit first). If truncated, the full output is saved to a temp file and the path is returned.`,
     promptSnippet: 'Fetch a webpage and convert it to readable Markdown',
     parameters: Type.Object({
       url: Type.String({ description: 'The URL to fetch' }),
@@ -315,18 +328,32 @@ export default function (pi: ExtensionAPI) {
         }
       }
 
-      const fullContentLength = Buffer.byteLength(resultText, 'utf8');
+      const fullText = resultText;
+      const fullContentLength = Buffer.byteLength(fullText, 'utf8');
 
       // Truncate output to avoid overwhelming the LLM context
-      const truncation = truncateHead(resultText, {
+      const truncation = truncateHead(fullText, {
         maxLines: DEFAULT_MAX_LINES,
         maxBytes: DEFAULT_MAX_BYTES,
       });
 
+      let outputText = truncation.content;
+      let fullOutputPath: string | undefined;
+
       if (truncation.truncated) {
-        resultText =
+        try {
+          fullOutputPath = await writeFullOutput('pi-fetch-url-', fullText, 'output.md');
+        } catch (e) {
+          console.warn('Failed to write full fetch_url output to temp file:', e);
+        }
+
+        const pathNote = fullOutputPath
+          ? ` Full output saved to: ${fullOutputPath}`
+          : ' Full output could not be saved.';
+
+        outputText =
           truncation.content +
-          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).]`;
+          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).${pathNote}]`;
       }
 
       const details: FetchUrlToolDetails = {
@@ -337,6 +364,7 @@ export default function (pi: ExtensionAPI) {
         contentType: resolvedContentType,
         statusCode: resolvedStatusCode,
         contentLength: fullContentLength,
+        fullOutputPath,
         truncation: truncation.truncated
           ? {
               truncated: true,
@@ -349,7 +377,7 @@ export default function (pi: ExtensionAPI) {
       };
 
       return {
-        content: [{ type: 'text', text: resultText }],
+        content: [{ type: 'text', text: outputText }],
         details,
       };
     },
@@ -432,6 +460,11 @@ export default function (pi: ExtensionAPI) {
             `[Tool output truncated: ${details.truncation.outputLines} of ${details.truncation.totalLines} lines (${formatSize(details.truncation.outputBytes)} of ${formatSize(details.truncation.totalBytes)})]`,
           ),
         );
+      }
+
+      if (details.fullOutputPath) {
+        lines.push('');
+        lines.push(theme.fg('dim', `Full output: ${details.fullOutputPath}`));
       }
 
       text.setText(lines.join('\n'));
