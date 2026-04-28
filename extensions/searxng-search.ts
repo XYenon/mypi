@@ -22,10 +22,133 @@ import { getDisplayHostname, summarizeHtmlText, summarizePlainText, truncateText
 
 interface SearxngConfig {
   baseUrl: string;
-  authType: 'none' | 'basic' | 'bearer';
+  authType?: 'basic' | 'bearer';
   username?: string;
   password?: string;
   token?: string;
+  headers?: Record<string, string>;
+  defaultLanguage?: string;
+  defaultCategories?: string;
+  defaultEngines?: string;
+  defaultSafesearch?: number;
+  defaultTimeRange?: 'day' | 'week' | 'month' | 'year';
+  defaultMaxResults?: number;
+  timeout: number;
+}
+
+const DEFAULT_TIMEOUT_SECONDS = 30;
+
+function getSearxngConfigPath(): string {
+  const xdgConfigHome = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
+  return path.join(xdgConfigHome, 'agents', 'searxng.toml');
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function normalizeString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+function normalizeNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function normalizeCsvValue(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    const parts = value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    return parts.length > 0 ? parts.join(',') : undefined;
+  }
+
+  return normalizeString(value);
+}
+
+function resolveEnvReference(value: string | undefined, fieldName: string): string | undefined {
+  if (!value || !value.startsWith('$')) {
+    return value;
+  }
+
+  const variableName = value.startsWith('${') && value.endsWith('}') ? value.slice(2, -1) : value.slice(1);
+  if (!variableName) {
+    throw new Error(`Invalid environment variable reference in ${fieldName}.`);
+  }
+
+  const resolved = process.env[variableName];
+  if (!resolved) {
+    throw new Error(`Environment variable ${variableName} referenced by ${fieldName} is not set.`);
+  }
+
+  return resolved;
+}
+
+function normalizeHeaders(value: unknown): Record<string, string> | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const headers: Record<string, string> = {};
+  for (const [key, headerValue] of Object.entries(value)) {
+    const normalizedValue = normalizeString(headerValue);
+    if (normalizedValue) {
+      headers[key] = resolveEnvReference(normalizedValue, `headers.${key}`) ?? normalizedValue;
+    }
+  }
+
+  return Object.keys(headers).length > 0 ? headers : undefined;
+}
+
+function parseSearxngConfig(rawConfig: unknown, configPath: string): SearxngConfig {
+  const rootConfig = isRecord(rawConfig) ? rawConfig : {};
+
+  const auth = isRecord(rootConfig.auth) ? rootConfig.auth : {};
+  const authType = normalizeString(auth.type);
+  if (authType && authType !== 'basic' && authType !== 'bearer') {
+    throw new Error(`Unknown auth.type "${authType}" in ${configPath}. Use "bearer" or "basic".`);
+  }
+
+  const normalizedConfig: SearxngConfig = {
+    baseUrl: normalizeString(rootConfig.base_url) ?? '',
+    authType: authType as SearxngConfig['authType'],
+    username: resolveEnvReference(normalizeString(auth.user), 'auth.user'),
+    password: resolveEnvReference(normalizeString(auth.pass), 'auth.pass'),
+    token: resolveEnvReference(normalizeString(auth.token), 'auth.token'),
+    headers: normalizeHeaders(rootConfig.headers),
+    defaultLanguage: normalizeString(rootConfig.default_language),
+    defaultCategories: normalizeCsvValue(rootConfig.default_categories),
+    defaultEngines: normalizeCsvValue(rootConfig.default_engines),
+    defaultSafesearch: normalizeNumber(rootConfig.default_safesearch),
+    defaultTimeRange: normalizeString(rootConfig.default_time_range) as SearxngConfig['defaultTimeRange'] | undefined,
+    defaultMaxResults: normalizeNumber(rootConfig.default_max_results),
+    timeout: normalizeNumber(rootConfig.timeout) ?? DEFAULT_TIMEOUT_SECONDS,
+  };
+
+  if (!normalizedConfig.baseUrl) {
+    throw new Error(`base_url is required in ${configPath}.`);
+  }
+
+  return normalizedConfig;
+}
+
+function loadSearxngConfig(): { config: SearxngConfig; sourcePath?: string; expectedPath: string } {
+  const configPath = getSearxngConfigPath();
+
+  if (fs.existsSync(configPath)) {
+    const rawToml = fs.readFileSync(configPath, 'utf8');
+    return {
+      config: parseSearxngConfig(toml.parse(rawToml), configPath),
+      sourcePath: configPath,
+      expectedPath: configPath,
+    };
+  }
+
+  return {
+    config: {
+      baseUrl: '',
+      timeout: DEFAULT_TIMEOUT_SECONDS,
+    },
+    expectedPath: configPath,
+  };
 }
 
 interface Answer {
@@ -116,44 +239,22 @@ async function writeFullOutput(prefix: string, content: string, filename: string
 }
 
 export default function (pi: ExtensionAPI) {
-  // Default config
   let config: SearxngConfig = {
-    baseUrl: '', // No default URL, must be configured
-    authType: 'none',
+    baseUrl: '',
+    timeout: DEFAULT_TIMEOUT_SECONDS,
   };
+  let configSourcePath: string | undefined;
+  let expectedConfigPath = getSearxngConfigPath();
+  let configError: string | undefined;
 
-  // Read configuration from mypi.toml in the $PI_CODING_AGENT_DIR directory
   try {
-    let agentDir = process.env.PI_CODING_AGENT_DIR;
-    if (!agentDir) {
-      agentDir = path.join(os.homedir(), '.pi', 'agent');
-    }
-
-    const configPath = path.join(agentDir, 'mypi.toml');
-
-    if (fs.existsSync(configPath)) {
-      try {
-        const tomlContent = fs.readFileSync(configPath, 'utf8');
-        const parsedConfig = toml.parse(tomlContent);
-
-        if (parsedConfig && parsedConfig.searxng) {
-          // Map TOML keys to config object, converting snake_case to camelCase where needed
-          const searxng = parsedConfig.searxng;
-          config = {
-            baseUrl: searxng.base_url || searxng.baseUrl || config.baseUrl,
-            authType: searxng.auth_type || searxng.authType || config.authType,
-            username: searxng.username,
-            password: searxng.password,
-            token: searxng.token,
-          };
-        }
-      } catch (e) {
-        console.warn(`Failed to parse mypi.toml from ${configPath}: ${e}`);
-      }
-    }
+    const loadedConfig = loadSearxngConfig();
+    config = loadedConfig.config;
+    configSourcePath = loadedConfig.sourcePath;
+    expectedConfigPath = loadedConfig.expectedPath;
   } catch (e) {
-    // Ignore errors reading config
-    console.warn('Failed to read mypi.toml:', e);
+    configError = e instanceof Error ? e.message : String(e);
+    console.warn('Failed to read SearXNG config:', e);
   }
 
   pi.registerTool({
@@ -177,45 +278,81 @@ export default function (pi: ExtensionAPI) {
     }),
 
     async execute(toolCallId, params, signal, _onUpdate, _ctx) {
-      if (!config.baseUrl) {
-        throw new Error('SearXNG base URL is not configured. Please check mypi.toml.');
+      if (configError) {
+        throw new Error(configError);
       }
+
+      if (!config.baseUrl) {
+        throw new Error(`SearXNG base URL is not configured. Expected shared config file at ${expectedConfigPath}.`);
+      }
+
       const { query, categories, language, time_range, limit } = params;
-      const searchUrl = new URL('search', config.baseUrl);
+      const effectiveCategories = categories ?? config.defaultCategories;
+      const effectiveLanguage = language ?? config.defaultLanguage;
+      const effectiveTimeRange = time_range ?? config.defaultTimeRange;
+      const effectiveLimit = limit ?? config.defaultMaxResults ?? 10;
+      const baseUrl = config.baseUrl.replace(/\/+$/, '');
+      const searchUrl = new URL(`${baseUrl}/search`);
 
       searchUrl.searchParams.append('q', query);
       searchUrl.searchParams.append('format', 'json');
 
-      if (categories) {
-        searchUrl.searchParams.append('categories', categories);
+      if (effectiveCategories) {
+        searchUrl.searchParams.append('categories', effectiveCategories);
       }
 
-      if (language) {
-        searchUrl.searchParams.append('language', language);
+      if (config.defaultEngines) {
+        searchUrl.searchParams.append('engines', config.defaultEngines);
       }
 
-      if (time_range) {
-        searchUrl.searchParams.append('time_range', time_range);
+      if (effectiveLanguage) {
+        searchUrl.searchParams.append('language', effectiveLanguage);
+      }
+
+      if (config.defaultSafesearch !== undefined) {
+        searchUrl.searchParams.append('safesearch', `${config.defaultSafesearch}`);
+      }
+
+      if (effectiveTimeRange) {
+        searchUrl.searchParams.append('time_range', effectiveTimeRange);
       }
 
       interface RequestHeaders {
         [key: string]: string | string[] | undefined;
       }
 
+      const requestHeaders: RequestHeaders = {
+        Accept: 'application/json',
+        ...(config.headers || {}),
+      };
+      if (!requestHeaders['User-Agent'] && !requestHeaders['user-agent']) {
+        requestHeaders['User-Agent'] = USER_AGENT;
+      }
+
       const requestOptions: https.RequestOptions = {
         method: 'GET',
         signal,
-        headers: {
-          Accept: 'application/json',
-          'User-Agent': USER_AGENT,
-        } as RequestHeaders,
+        timeout: config.timeout * 1000,
+        headers: requestHeaders,
       };
 
       // Handle authentication
-      if (config.authType === 'basic' && config.username && config.password) {
+      if (config.authType === 'basic') {
+        if (!config.username || !config.password) {
+          throw new Error(
+            `auth.user and auth.pass are required when auth.type is "basic" in ${configSourcePath || expectedConfigPath}.`,
+          );
+        }
+
         const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
         (requestOptions.headers as RequestHeaders)['Authorization'] = `Basic ${auth}`;
-      } else if (config.authType === 'bearer' && config.token) {
+      } else if (config.authType === 'bearer') {
+        if (!config.token) {
+          throw new Error(
+            `auth.token is required when auth.type is "bearer" in ${configSourcePath || expectedConfigPath}.`,
+          );
+        }
+
         (requestOptions.headers as RequestHeaders)['Authorization'] = `Bearer ${config.token}`;
       }
 
@@ -240,6 +377,10 @@ export default function (pi: ExtensionAPI) {
 
         req.on('error', (e) => {
           reject(new Error(`Request failed: ${e.message}`));
+        });
+
+        req.on('timeout', () => {
+          req.destroy(new Error(`Request timed out after ${config.timeout}s`));
         });
 
         if (signal?.aborted) {
@@ -277,7 +418,7 @@ export default function (pi: ExtensionAPI) {
 
       // Format search results
       const formattedResults: WebSearchResultItem[] = ((jsonResponse.results as SearchResult[]) || [])
-        .slice(0, limit || 10)
+        .slice(0, effectiveLimit)
         .map((result) => ({
           title: result.title,
           url: result.url,
@@ -473,6 +614,11 @@ export default function (pi: ExtensionAPI) {
       if (details.fullOutputPath) {
         lines.push('');
         lines.push(theme.fg('dim', `Full output: ${details.fullOutputPath}`));
+      }
+
+      if (expanded && configSourcePath) {
+        lines.push('');
+        lines.push(theme.fg('dim', `Config: ${configSourcePath}`));
       }
 
       text.setText(lines.join('\n'));

@@ -1,0 +1,30 @@
+# Copy this file to:
+#   $XDG_CONFIG_HOME/agents/searxng.toml
+# Default path:
+#   ~/.config/agents/searxng.toml
+
+base_url = "https://searx.be"
+default_categories = ["general"]
+default_engines = ["google", "duckduckgo"]
+default_max_results = 10
+# default_language = "en"
+# default_safesearch = 1
+# default_time_range = "day"
+# timeout = 30
+
+# Omit the [auth] table entirely if your SearXNG instance does not require auth.
+
+# Bearer auth example:
+# [auth]
+# type = "bearer"
+# token = "$SEARXNG_TOKEN"
+
+# Basic auth example:
+# [auth]
+# type = "basic"
+# user = "$SEARXNG_USERNAME"
+# pass = "$SEARXNG_PASSWORD"
+
+# Optional extra headers:
+# [headers]
+# X-Custom-Header = "value"
