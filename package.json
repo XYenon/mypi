@@ -57,7 +57,7 @@
     "pi-powerline-footer": "^0.4.19",
     "pi-rewind-hook": "^1.8.4",
     "pi-skill-palette": "^1.1.0",
-    "pi-subagents": "^0.18.1",
+    "pi-subagents": "^0.20.1",
     "toml": "^4.1.1",
     "turndown": "^7.2.4"
   },
