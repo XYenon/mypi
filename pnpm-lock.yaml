@@ -36,8 +36,8 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1(ws@8.20.0)(zod@4.3.6)
       pi-powerline-footer:
-        specifier: ^0.4.19
-        version: 0.4.19
+        specifier: ^0.4.20
+        version: 0.4.20
       pi-rewind-hook:
         specifier: ^1.8.4
         version: 1.8.4
@@ -571,35 +571,30 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@mariozechner/clipboard-linux-arm64-musl@0.3.3':
     resolution: {integrity: sha512-o1paj2+zmAQ/LaPS85XJCxhNowNQpxYM2cGY6pWvB5Kqmz6hZjl6CzDg5tbf1hZkn/Em6jpOaE2UtMxKdELBDA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@mariozechner/clipboard-linux-riscv64-gnu@0.3.3':
     resolution: {integrity: sha512-dkEhE4ekePJwMbBq9HP1//CFMNmDzA/iV9AXqBfvL5CWmmDIRXqh4A3YZt3tWO/HdMerX+xNCEiR7WiOsIG+UA==}
     engines: {node: '>= 10'}
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   '@mariozechner/clipboard-linux-x64-gnu@0.3.3':
     resolution: {integrity: sha512-lT2yANtTLlEtFBIH3uGoRa/CQas/eBoLNi3qr9axQFoRgF4RGPSJ66yHOSnMECBneTIb1Iqv3UxokTfX27CdoQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@mariozechner/clipboard-linux-x64-musl@0.3.3':
     resolution: {integrity: sha512-saq/MCB0QHK/7ZZLjAZ0QkbY944dyjOsur8gneGCfMitt+GOiE1CU4OUipHC4b6x8UDY9bRLsR4aBaxu22OFPA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@mariozechner/clipboard-win32-arm64-msvc@0.3.3':
     resolution: {integrity: sha512-cGuvSj0/2X2w983yEcKw+i+r1EBej6ZZIN+fXG3eY2G/HaIQpbXpLvMxKyZ9LKtbZx+Z6q/gELEoSBMLML6BaQ==}
@@ -1850,8 +1845,8 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  pi-powerline-footer@0.4.19:
-    resolution: {integrity: sha512-mDTq+Tm9svzsjKid+4j9jk/tZE3VBBMTlz3CcrdhdNvaRzSSE0qZiUdZ4cA6LzxRcfkbl3r4WleCD7n2WQucqQ==}
+  pi-powerline-footer@0.4.20:
+    resolution: {integrity: sha512-MsdGEqyx42/lk04B8fzc0CPEA4lgaGejyS126AwNNAyaHwxJLLvNOjZZ0gvaMhUFjNb/5d0kZcHP0ZICobud/A==}
 
   pi-rewind-hook@1.8.4:
     resolution: {integrity: sha512-M2V/8pR62pdV/el8hUULpb6abty8i/Z6+CidfiJ/LB00aQ3vaMk+8wvoz/XaoGrW8vLhqwJrdY/Kwaac2eOoMg==}
@@ -2132,6 +2127,9 @@ packages:
 
   typebox@1.1.33:
     resolution: {integrity: sha512-+/MWwlQ1q2GSVwoxi/+u5JsHkgLQKcCN2Nsjree9c+K7GJu40qbaHrFETmfV1i9Fs1TcOVfynW+jJvIWcXtvjw==}
+
+  typebox@1.1.34:
+    resolution: {integrity: sha512-V0fM5W5DTXlEMDxqtX1dQ25HR1RQ11DPUVrIup4sJi1yQtIyI30SHfxBy/HjXKL1CtUqc5or2igA/wa/v4hMKQ==}
 
   typescript-eslint@8.59.0:
     resolution: {integrity: sha512-BU3ONW9X+v90EcCH9ZS6LMackcVtxRLlI3XrYyqZIwVSHIk7Qf7bFw1z0M9Q0IUxhTMZCf8piY9hTYaNEIASrw==}
@@ -2948,7 +2946,7 @@ snapshots:
   '@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)':
     dependencies:
       '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
-      typebox: 1.1.33
+      typebox: 1.1.34
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
       - aws-crt
@@ -4427,7 +4425,7 @@ snapshots:
       - utf-8-validate
       - ws
 
-  pi-powerline-footer@0.4.19: {}
+  pi-powerline-footer@0.4.20: {}
 
   pi-rewind-hook@1.8.4: {}
 
@@ -4730,6 +4728,8 @@ snapshots:
       mime-types: 3.0.2
 
   typebox@1.1.33: {}
+
+  typebox@1.1.34: {}
 
   typescript-eslint@8.59.0(eslint@10.2.1)(typescript@6.0.3):
     dependencies:
