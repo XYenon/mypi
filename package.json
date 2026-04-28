@@ -44,7 +44,8 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "preview:renderers": "tsx scripts/preview-renderers.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
@@ -64,6 +65,7 @@
   "peerDependencies": {
     "@mariozechner/pi-ai": "*",
     "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
     "typebox": "*"
   },
   "devDependencies": {

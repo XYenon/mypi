@@ -7,12 +7,81 @@ import {
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
   formatSize,
+  keyHint,
 } from '@mariozechner/pi-coding-agent';
 import { Type } from 'typebox';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import TurndownService from 'turndown';
-import { USER_AGENT } from './utils.js';
+import { Text } from '@mariozechner/pi-tui';
+import {
+  extractMarkdownTitle,
+  getDisplayHostname,
+  getPreviewLines,
+  shortenUrlForDisplay,
+  truncateText,
+  USER_AGENT,
+} from './utils.js';
+
+type FetchUrlSource =
+  | 'direct-text'
+  | 'direct-json'
+  | 'direct-markdown'
+  | 'rsc'
+  | 'readability'
+  | 'next-rsc'
+  | 'jina-reader';
+
+interface FetchUrlToolDetails {
+  url: string;
+  finalUrl: string;
+  source: FetchUrlSource;
+  title?: string;
+  contentType: string;
+  statusCode: number;
+  contentLength: number;
+  truncation?: {
+    truncated: boolean;
+    outputLines: number;
+    totalLines: number;
+    outputBytes: number;
+    totalBytes: number;
+  };
+}
+
+function getSourceLabel(source: FetchUrlSource): string {
+  switch (source) {
+    case 'direct-text':
+      return 'Direct text';
+    case 'direct-json':
+      return 'Direct JSON';
+    case 'direct-markdown':
+      return 'Direct Markdown';
+    case 'rsc':
+      return 'RSC payload';
+    case 'readability':
+      return 'Readable article';
+    case 'next-rsc':
+      return 'Next.js payload';
+    case 'jina-reader':
+      return 'Jina Reader';
+  }
+}
+
+function getPreviewMode(source: FetchUrlSource): 'plain' | 'markdown' {
+  switch (source) {
+    case 'direct-markdown':
+    case 'readability':
+    case 'jina-reader':
+      return 'markdown';
+    default:
+      return 'plain';
+  }
+}
+
+function stripRenderedTruncationNotice(text: string): string {
+  return text.replace(/\n\n\[Output truncated:[\s\S]*\]$/, '');
+}
 
 // Helper to fetch URL content
 function fetchContent(
@@ -20,7 +89,7 @@ function fetchContent(
   headers: Record<string, string> = {},
   signal?: AbortSignal,
   maxRedirects: number = 5,
-): Promise<{ data: string; contentType: string; statusCode: number }> {
+): Promise<{ data: string; contentType: string; statusCode: number; finalUrl: string }> {
   return new Promise((resolve, reject) => {
     if (maxRedirects < 0) {
       reject(new Error('Too many redirects'));
@@ -53,6 +122,7 @@ function fetchContent(
           data,
           contentType: res.headers['content-type'] || '',
           statusCode: res.statusCode || 0,
+          finalUrl: url,
         });
       });
     });
@@ -143,7 +213,7 @@ export default function (pi: ExtensionAPI) {
       const turndownService = new TurndownService();
 
       // 1. Try local fetch
-      const { data, contentType, statusCode } = await fetchContent(url, {}, signal);
+      const { data, contentType, statusCode, finalUrl } = await fetchContent(url, {}, signal);
 
       // Check for blocking/challenges
       const lowerData = data.toLowerCase();
@@ -157,23 +227,36 @@ export default function (pi: ExtensionAPI) {
         lowerData.includes('just a moment...');
 
       let resultText: string | undefined;
+      let source: FetchUrlSource = 'direct-text';
+      const resolvedUrl = finalUrl;
+      let resolvedContentType = contentType;
+      let resolvedStatusCode = statusCode;
+      let title: string | undefined;
 
       if (!isChallenge && statusCode >= 200 && statusCode < 300) {
         // 2. Process based on Content-Type
-        if (
-          contentType.includes('application/json') ||
-          contentType.includes('text/plain') ||
-          contentType.includes('text/markdown')
-        ) {
+        if (contentType.includes('application/json')) {
           resultText = data;
+          source = 'direct-json';
+          title = extractMarkdownTitle(data);
+        } else if (contentType.includes('text/plain')) {
+          resultText = data;
+          source = 'direct-text';
+          title = extractMarkdownTitle(data);
+        } else if (contentType.includes('text/markdown')) {
+          resultText = data;
+          source = 'direct-markdown';
+          title = extractMarkdownTitle(data);
         } else if (contentType.includes('text/x-component')) {
           const rscText = parseRsc(data);
           if (rscText.length > 50) {
             resultText = rscText;
+            source = 'rsc';
+            title = extractMarkdownTitle(rscText);
           }
         } else if (contentType.includes('text/html')) {
           // 3. HTML -> Readability
-          const doc = new JSDOM(data, { url });
+          const doc = new JSDOM(data, { url: finalUrl });
           const reader = new Readability(doc.window.document);
           const article = reader.parse();
 
@@ -181,6 +264,8 @@ export default function (pi: ExtensionAPI) {
             // Convert to Markdown
             const markdown = turndownService.turndown(article.content);
             resultText = `# ${article.title}\n\n${markdown}`;
+            source = 'readability';
+            title = article.title || doc.window.document.title || undefined;
           } else {
             // 4. HTML -> Try to find RSC payload in scripts?
             const scripts = doc.window.document.querySelectorAll('script');
@@ -189,6 +274,8 @@ export default function (pi: ExtensionAPI) {
                 const rscText = parseRsc(script.textContent);
                 if (rscText.length > 50) {
                   resultText = rscText;
+                  source = 'next-rsc';
+                  title = extractMarkdownTitle(rscText) || doc.window.document.title || undefined;
                   break;
                 }
               }
@@ -217,12 +304,18 @@ export default function (pi: ExtensionAPI) {
           }
 
           resultText = jinaResult.data;
+          source = 'jina-reader';
+          title = extractMarkdownTitle(jinaResult.data);
+          resolvedContentType = jinaResult.contentType || resolvedContentType;
+          resolvedStatusCode = jinaResult.statusCode;
         } else {
           throw new Error(
             `Failed to fetch content via local parser and Jina Reader (Status: ${jinaResult.statusCode}). Please use the "agent-browser" tool.`,
           );
         }
       }
+
+      const fullContentLength = Buffer.byteLength(resultText, 'utf8');
 
       // Truncate output to avoid overwhelming the LLM context
       const truncation = truncateHead(resultText, {
@@ -236,7 +329,113 @@ export default function (pi: ExtensionAPI) {
           `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}).]`;
       }
 
-      return { content: [{ type: 'text', text: resultText }] };
+      const details: FetchUrlToolDetails = {
+        url,
+        finalUrl: resolvedUrl,
+        source,
+        title,
+        contentType: resolvedContentType,
+        statusCode: resolvedStatusCode,
+        contentLength: fullContentLength,
+        truncation: truncation.truncated
+          ? {
+              truncated: true,
+              outputLines: truncation.outputLines,
+              totalLines: truncation.totalLines,
+              outputBytes: truncation.outputBytes,
+              totalBytes: truncation.totalBytes,
+            }
+          : undefined,
+      };
+
+      return {
+        content: [{ type: 'text', text: resultText }],
+        details,
+      };
+    },
+
+    renderCall(args, theme, context) {
+      const text = (context.lastComponent as Text | undefined) ?? new Text('', 0, 0);
+      text.setText(
+        theme.fg('toolTitle', theme.bold('fetch_url ')) + theme.fg('accent', shortenUrlForDisplay(args.url, 84)),
+      );
+      return text;
+    },
+
+    renderResult(result, { expanded, isPartial }, theme, context) {
+      const text = (context.lastComponent as Text | undefined) ?? new Text('', 0, 0);
+
+      if (isPartial) {
+        text.setText(theme.fg('warning', 'Fetching page…'));
+        return text;
+      }
+
+      const details = result.details as FetchUrlToolDetails | undefined;
+      if (!details) {
+        const fallback = result.content[0];
+        text.setText(fallback?.type === 'text' ? fallback.text : '');
+        return text;
+      }
+
+      const rawText = result.content[0]?.type === 'text' ? result.content[0].text : '';
+      const bodyText = stripRenderedTruncationNotice(rawText);
+      const previewLines = getPreviewLines(
+        bodyText,
+        expanded ? 18 : 5,
+        expanded ? 160 : 110,
+        getPreviewMode(details.source),
+      );
+      const rawLineCount = bodyText.split('\n').filter((line) => line.trim()).length;
+      const title = details.title || shortenUrlForDisplay(details.finalUrl || details.url, 100);
+
+      const lines: string[] = [];
+      lines.push(theme.fg('toolTitle', theme.bold(truncateText(title, 100))));
+
+      let meta = theme.fg('accent', getDisplayHostname(details.finalUrl || details.url));
+      meta += theme.fg('dim', ` • ${getSourceLabel(details.source)}`);
+      if (details.contentType) {
+        meta += theme.fg('dim', ` • ${truncateText(details.contentType.split(';')[0] || details.contentType, 32)}`);
+      }
+      meta += theme.fg('dim', ` • ${formatSize(details.contentLength)}`);
+      if (details.statusCode > 0 && details.statusCode !== 200) {
+        meta += theme.fg('dim', ` • HTTP ${details.statusCode}`);
+      }
+      if (details.finalUrl && details.finalUrl !== details.url) {
+        meta += theme.fg('dim', ' • redirected');
+      }
+      lines.push(meta);
+
+      if (expanded) {
+        lines.push(theme.fg('dim', details.finalUrl));
+      }
+
+      if (previewLines.length > 0) {
+        lines.push('');
+        lines.push(...previewLines.map((line) => theme.fg('toolOutput', line)));
+      }
+
+      if (!expanded && rawLineCount > previewLines.length) {
+        lines.push('');
+        lines.push(theme.fg('dim', `... more content (${keyHint('app.tools.expand', 'to expand')})`));
+      }
+
+      if (expanded && rawLineCount > previewLines.length) {
+        lines.push('');
+        lines.push(theme.fg('dim', `Preview capped to ${previewLines.length} lines for readability.`));
+      }
+
+      if (details.truncation?.truncated) {
+        lines.push('');
+        lines.push(
+          theme.fg(
+            'warning',
+            `[Tool output truncated: ${details.truncation.outputLines} of ${details.truncation.totalLines} lines (${formatSize(details.truncation.outputBytes)} of ${formatSize(details.truncation.totalBytes)})]`,
+          ),
+        );
+      }
+
+      text.setText(lines.join('\n'));
+      return text;
     },
   });
 }
