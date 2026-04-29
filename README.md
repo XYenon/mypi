@@ -13,13 +13,14 @@
 
 This package also bundles and automatically loads several powerful pi plugins:
 
-- **[mitsupi](https://github.com/mitsuhiko/agent-stuff)**: Provides utility extensions such as `context`, `multi-edit`, `notify`, and `review`.
+- **[mitsupi](https://github.com/mitsuhiko/agent-stuff)**: Provides utility extensions such as `context`, `notify`, and `review`.
+- **[pi-catppuccin](https://github.com/XYenon/catppuccin-pi-coding-agent)**: Beautiful Catppuccin themes for the TUI.
+- **[pi-hashline-edit](https://github.com/RimuruW/pi-hashline-edit)**: Provides hash-line based multi-edit capabilities.
 - **[pi-mcp-adapter](https://github.com/nicobailon/pi-mcp-adapter)**: Connects to Model Context Protocol (MCP) servers.
 - **[pi-powerline-footer](https://github.com/nicobailon/pi-powerline-footer)**: Enhances the TUI with a powerline-style status footer.
 - **[pi-rewind-hook](https://github.com/nicobailon/pi-rewind-hook)**: Allows rewinding session state.
 - **[pi-skill-palette](https://github.com/nicobailon/pi-skill-palette)**: A command palette for quickly discovering and invoking skills.
 - **[pi-subagents](https://github.com/nicobailon/pi-subagents)**: Enables workflows delegating tasks to builtin or custom subagents.
-- **[pi-catppuccin](https://github.com/XYenon/catppuccin-pi-coding-agent)**: Beautiful Catppuccin themes for the TUI.
 
 ## Installation
 

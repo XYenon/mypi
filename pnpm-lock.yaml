@@ -35,6 +35,9 @@ importers:
       pi-catppuccin:
         specifier: github:XYenon/catppuccin-pi-coding-agent
         version: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e
+      pi-hashline-edit:
+        specifier: ^0.6.0
+        version: 0.6.0(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)(@sinclair/typebox@0.34.49)
       pi-mcp-adapter:
         specifier: ^2.5.1
         version: 2.5.1(ws@8.20.0)(zod@4.3.6)
@@ -716,6 +719,9 @@ packages:
   '@silvia-odwyer/photon-node@0.3.4':
     resolution: {integrity: sha512-bnly4BKB3KDTFxrUIcgCLbaeVVS8lrAkri1pEzskpmxu9MdfGQTy8b8EgcD83ywD3RPMsIulY8xJH5Awa+t9fA==}
 
+  '@sinclair/typebox@0.34.49':
+    resolution: {integrity: sha512-brySQQs7Jtn0joV8Xh9ZV/hZb9Ozb0pmazDIASBkYKCjXrXU3mpcFahmK/z4YDhGkQvP9mWJbVyahdtU5wQA+A==}
+
   '@smithy/config-resolver@4.4.17':
     resolution: {integrity: sha512-TzDZcAnhTyAHbXVxWZo7/tEcrIeFq20IBk8So3OLOetWpR8EwY/yEqBMBFaJMeyEiREDq4NfEl+qO3OAUD+vbQ==}
     engines: {node: '>=18.0.0'}
@@ -1157,6 +1163,9 @@ packages:
   css-tree@3.2.1:
     resolution: {integrity: sha512-X7sjQzceUhu1u7Y/ylrRZFU2FS6LRiFVp6rKLPg23y3x3c3DOKAwuXGDp+PAGjh6CSnCjYeAul8pcT8bAl+lSA==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
+
+  cuint@0.2.2:
+    resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}
 
   data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
@@ -1847,6 +1856,14 @@ packages:
     resolution: {tarball: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e}
     version: 0.1.0
 
+  pi-hashline-edit@0.6.0:
+    resolution: {integrity: sha512-upbQGAAm7imI0q4IvTonqhwcUOiuSjh43weCMH9I22pkGNEWVI4qNeHgh7cNMgHu5OKxkCFMFobFKQ3POuPCHg==}
+    peerDependencies:
+      '@mariozechner/pi-ai': '>=0.63.0'
+      '@mariozechner/pi-coding-agent': '>=0.63.0'
+      '@mariozechner/pi-tui': '*'
+      '@sinclair/typebox': '*'
+
   pi-mcp-adapter@2.5.1:
     resolution: {integrity: sha512-5n7oOJl4QkwiBtu5ti90wp63o1PYKCIgHlPiVeI8vmtz/JxA3QXYf+BvqLUZY1PAeRNQVgJs2sRLLrRZlD+RWA==}
     hasBin: true
@@ -2235,6 +2252,9 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
+
+  xxhashjs@0.2.2:
+    resolution: {integrity: sha512-AkTuIuVTET12tpsVIQo+ZU6f/qDmKuRUcjaqR+OIvm+aCBsZ95i7UVY5WJ9TMsSaZ0DA2WxoZ4acu0sPH+OKAw==}
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -3097,6 +3117,8 @@ snapshots:
 
   '@silvia-odwyer/photon-node@0.3.4': {}
 
+  '@sinclair/typebox@0.34.49': {}
+
   '@smithy/config-resolver@4.4.17':
     dependencies:
       '@smithy/node-config-provider': 4.3.14
@@ -3679,6 +3701,8 @@ snapshots:
     dependencies:
       mdn-data: 2.27.1
       source-map-js: 1.2.1
+
+  cuint@0.2.2: {}
 
   data-uri-to-buffer@4.0.1: {}
 
@@ -4412,6 +4436,18 @@ snapshots:
 
   pi-catppuccin@https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e: {}
 
+  pi-hashline-edit@0.6.0(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)(@sinclair/typebox@0.34.49):
+    dependencies:
+      '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
+      '@mariozechner/pi-coding-agent': 0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
+      '@mariozechner/pi-tui': 0.70.1
+      '@sinclair/typebox': 0.34.49
+      diff: 8.0.4
+      file-type: 21.3.4
+      xxhashjs: 0.2.2
+    transitivePeerDependencies:
+      - supports-color
+
   pi-mcp-adapter@2.5.1(ws@8.20.0)(zod@4.3.6):
     dependencies:
       '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
@@ -4806,6 +4842,10 @@ snapshots:
   xml-name-validator@5.0.0: {}
 
   xmlchars@2.2.0: {}
+
+  xxhashjs@0.2.2:
+    dependencies:
+      cuint: 0.2.2
 
   y18n@5.0.8: {}
 
