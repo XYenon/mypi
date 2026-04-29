@@ -1,6 +1,6 @@
 # mypi
 
-`mypi` is a personalized [pi-package](https://github.com/mariozechner/pi-coding-agent) project for the **pi coding agent** framework. It provides custom tools, extensions, and a collection of curated plugins to enhance your AI coding experience.
+`mypi` is a personalized pi-package project for the **[pi coding agent](https://github.com/badlogic/pi-mono)** framework. It provides custom tools, extensions, and a collection of curated plugins to enhance your AI coding experience.
 
 ## Features
 
@@ -13,12 +13,12 @@
 
 This package also bundles and automatically loads several powerful pi plugins:
 
-- **[mitsupi](https://github.com/mariozechner/mitsupi)**: Provides utility extensions such as `context`, `multi-edit`, `notify`, and `review`.
-- **[pi-mcp-adapter](https://github.com/mariozechner/pi-mcp-adapter)**: Connects to Model Context Protocol (MCP) servers.
-- **[pi-powerline-footer](https://github.com/mariozechner/pi-powerline-footer)**: Enhances the TUI with a powerline-style status footer.
-- **[pi-rewind-hook](https://github.com/mariozechner/pi-rewind-hook)**: Allows rewinding session state.
-- **[pi-skill-palette](https://github.com/mariozechner/pi-skill-palette)**: A command palette for quickly discovering and invoking skills.
-- **[pi-subagents](https://github.com/mariozechner/pi-subagents)**: Enables workflows delegating tasks to builtin or custom subagents.
+- **[mitsupi](https://github.com/mitsuhiko/agent-stuff)**: Provides utility extensions such as `context`, `multi-edit`, `notify`, and `review`.
+- **[pi-mcp-adapter](https://github.com/nicobailon/pi-mcp-adapter)**: Connects to Model Context Protocol (MCP) servers.
+- **[pi-powerline-footer](https://github.com/nicobailon/pi-powerline-footer)**: Enhances the TUI with a powerline-style status footer.
+- **[pi-rewind-hook](https://github.com/nicobailon/pi-rewind-hook)**: Allows rewinding session state.
+- **[pi-skill-palette](https://github.com/nicobailon/pi-skill-palette)**: A command palette for quickly discovering and invoking skills.
+- **[pi-subagents](https://github.com/nicobailon/pi-subagents)**: Enables workflows delegating tasks to builtin or custom subagents.
 - **[pi-catppuccin](https://github.com/XYenon/catppuccin-pi-coding-agent)**: Beautiful Catppuccin themes for the TUI.
 
 ## Installation
