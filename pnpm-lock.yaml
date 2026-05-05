@@ -51,8 +51,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       pi-subagents:
-        specifier: ^0.20.1
-        version: 0.20.1(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)
+        specifier: ^0.24.0
+        version: 0.24.0(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1)
       toml:
         specifier: ^4.1.1
         version: 4.1.1
@@ -1874,14 +1874,23 @@ packages:
   pi-skill-palette@1.1.0:
     resolution: {integrity: sha512-z2ujY9bfTwM3FKSkYqi1j17YLgjtJwHCL3RjQZqYD2QaN2Eu8S4fVnmBhrylLAxkXNW610p2JAWrPBqf7KMrzQ==}
 
-  pi-subagents@0.20.1:
-    resolution: {integrity: sha512-yT4hpCN6yMBA6C7NTmHwYaoC6MMPST9WolChWULokciVuITAKokU+WDiUwrYYwx4VEDCwAlvt158b+ZbiBNTQw==}
+  pi-subagents@0.24.0:
+    resolution: {integrity: sha512-qg8Kx7zW9+P7a7o3X4J3poerYnIP125oloKOeScxJlrMIKwUCORBFGZixzdmQEo83SOcoPt3UFjyYeDsHmouIw==}
     hasBin: true
     peerDependencies:
       '@mariozechner/pi-agent-core': '*'
       '@mariozechner/pi-ai': '*'
       '@mariozechner/pi-coding-agent': '*'
       '@mariozechner/pi-tui': '*'
+    peerDependenciesMeta:
+      '@mariozechner/pi-agent-core':
+        optional: true
+      '@mariozechner/pi-ai':
+        optional: true
+      '@mariozechner/pi-coding-agent':
+        optional: true
+      '@mariozechner/pi-tui':
+        optional: true
 
   picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
@@ -3020,7 +3029,7 @@ snapshots:
       minimatch: 10.2.5
       proper-lockfile: 4.1.2
       strip-ansi: 7.2.0
-      typebox: 1.1.33
+      typebox: 1.1.37
       undici: 7.25.0
       uuid: 14.0.0
       yaml: 2.8.3
@@ -4470,13 +4479,14 @@ snapshots:
 
   pi-skill-palette@1.1.0: {}
 
-  pi-subagents@0.20.1(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1):
+  pi-subagents@0.24.0(@mariozechner/pi-agent-core@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-ai@0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-coding-agent@0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6))(@mariozechner/pi-tui@0.70.1):
     dependencies:
+      typebox: 1.1.37
+    optionalDependencies:
       '@mariozechner/pi-agent-core': 0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-ai': 0.70.2(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-coding-agent': 0.70.1(@modelcontextprotocol/sdk@1.29.0(zod@4.3.6))(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-tui': 0.70.1
-      typebox: 1.1.33
 
   picomatch@4.0.4: {}
 
