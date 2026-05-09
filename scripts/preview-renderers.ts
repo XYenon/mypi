@@ -2,7 +2,6 @@ import { initTheme } from '@mariozechner/pi-coding-agent';
 import { KeybindingsManager as AppKeybindingsManager } from '../node_modules/@mariozechner/pi-coding-agent/dist/core/keybindings.js';
 import type { ExtensionAPI } from '@mariozechner/pi-coding-agent';
 import { setKeybindings, type Component } from '@mariozechner/pi-tui';
-import fetchUrlExtension from '../extensions/fetch-url.ts';
 import webSearchExtension from '../extensions/searxng-search.ts';
 
 interface PreviewTheme {
@@ -84,7 +83,6 @@ initTheme('dark', false);
 setKeybindings(new AppKeybindingsManager());
 
 webSearchExtension(fakePi);
-fetchUrlExtension(fakePi);
 
 const webSearchArgs = {
   query: 'rust web framework benchmark',
@@ -156,70 +154,25 @@ const webSearchResult: PreviewToolResult = {
   },
 };
 
-const fetchUrlArgs = {
-  url: 'https://example.com/blog/rust-web-benchmarks-2026',
-};
-
-const fetchUrlContent = `# Rust Web Benchmarks in 2026
-
-Actix and Axum remain the two most frequently compared Rust frameworks for high-throughput APIs.
-
-This article evaluates latency under mixed workloads instead of relying on hello-world routes only.
-
-The benchmark suite includes middleware, JSON serialization, and connection pooling overhead.
-
-In realistic CRUD traffic, Axum stays close to Actix while offering a more modular developer experience.
-
-The conclusion is that benchmark methodology matters more than any single headline number.
-
-You should always validate performance against your own traffic profile before picking a framework.`;
-
-const fetchUrlResult: PreviewToolResult = {
-  content: [{ type: 'text', text: fetchUrlContent }],
-  details: {
-    url: 'https://example.com/blog/rust-web-benchmarks-2026',
-    finalUrl: 'https://example.com/blog/rust-web-benchmarks-2026',
-    source: 'readability',
-    title: 'Rust Web Benchmarks in 2026',
-    contentType: 'text/html; charset=utf-8',
-    statusCode: 200,
-    contentLength: 10240,
-  },
-};
-
 const previewCases: PreviewCase[] = [
   {
-    tool: 'web_search',
-    name: 'web_search / call',
-    render: () => renderToolCall('web_search', webSearchArgs),
+    tool: 'searxng_search',
+    name: 'searxng_search / call',
+    render: () => renderToolCall('searxng_search', webSearchArgs),
   },
   {
-    tool: 'web_search',
-    name: 'web_search / result / collapsed',
-    render: () => renderToolResult('web_search', webSearchResult, { expanded: false, isPartial: false }, webSearchArgs),
+    tool: 'searxng_search',
+    name: 'searxng_search / result / collapsed',
+    render: () =>
+      renderToolResult('searxng_search', webSearchResult, { expanded: false, isPartial: false }, webSearchArgs),
   },
   {
-    tool: 'web_search',
-    name: 'web_search / result / expanded',
-    render: () => renderToolResult('web_search', webSearchResult, { expanded: true, isPartial: false }, webSearchArgs),
-  },
-  {
-    tool: 'fetch_url',
-    name: 'fetch_url / call',
-    render: () => renderToolCall('fetch_url', fetchUrlArgs),
-  },
-  {
-    tool: 'fetch_url',
-    name: 'fetch_url / result / collapsed',
-    render: () => renderToolResult('fetch_url', fetchUrlResult, { expanded: false, isPartial: false }, fetchUrlArgs),
-  },
-  {
-    tool: 'fetch_url',
-    name: 'fetch_url / result / expanded',
-    render: () => renderToolResult('fetch_url', fetchUrlResult, { expanded: true, isPartial: false }, fetchUrlArgs),
+    tool: 'searxng_search',
+    name: 'searxng_search / result / expanded',
+    render: () =>
+      renderToolResult('searxng_search', webSearchResult, { expanded: true, isPartial: false }, webSearchArgs),
   },
 ];
-
 const visibleCases = toolFilter ? previewCases.filter((item) => item.tool === toolFilter) : previewCases;
 
 if (visibleCases.length === 0) {
@@ -232,7 +185,7 @@ const visibleTools = [...new Set(visibleCases.map((item) => item.tool))];
 console.log(`# Renderer preview`);
 console.log(`width: ${width}`);
 console.log(`tools: ${visibleTools.join(', ')}`);
-console.log(`hint: pnpm preview:renderers -- --tool web_search --width 120`);
+console.log(`hint: pnpm preview:renderers -- --tool searxng_search --width 120`);
 console.log('');
 
 for (const previewCase of visibleCases) {

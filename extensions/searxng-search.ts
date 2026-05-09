@@ -258,7 +258,7 @@ export default function (pi: ExtensionAPI) {
   }
 
   pi.registerTool({
-    name: 'web_search',
+    name: 'searxng_search',
     label: 'Web Search (SearXNG)',
     description: `Search the web using a SearXNG instance. Returns search results with titles, URLs, and snippets. Output is truncated to ${DEFAULT_MAX_LINES} lines or ${formatSize(DEFAULT_MAX_BYTES)} (whichever is hit first). If truncated, the full output is saved to a temp file and the path is returned.`,
 
@@ -451,7 +451,7 @@ export default function (pi: ExtensionAPI) {
         try {
           fullOutputPath = await writeFullOutput('pi-web-search-', fullText, 'output.json');
         } catch (e) {
-          console.warn('Failed to write full web_search output to temp file:', e);
+          console.warn('Failed to write full searxng_search output to temp file:', e);
         }
 
         const pathNote = fullOutputPath
@@ -487,7 +487,7 @@ export default function (pi: ExtensionAPI) {
       const text = (context.lastComponent as Text | undefined) ?? new Text('', 0, 0);
 
       let content =
-        theme.fg('toolTitle', theme.bold('web_search ')) + theme.fg('accent', `"${truncateText(args.query, 88)}"`);
+        theme.fg('toolTitle', theme.bold('searxng_search ')) + theme.fg('accent', `"${truncateText(args.query, 88)}"`);
 
       const filters: string[] = [];
       if (args.categories) {

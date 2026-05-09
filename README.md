@@ -31,6 +31,7 @@ pi install https://github.com/XYenon/mypi
 ```
 
 By default, `pi install` writes to your global settings. If you want to install it just for a specific project, append the `-l` flag:
+
 ```bash
 pi install -l https://github.com/XYenon/mypi
 ```
