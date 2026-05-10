@@ -1,7 +1,7 @@
-import { initTheme } from '@mariozechner/pi-coding-agent';
-import { KeybindingsManager as AppKeybindingsManager } from '../node_modules/@mariozechner/pi-coding-agent/dist/core/keybindings.js';
-import type { ExtensionAPI } from '@mariozechner/pi-coding-agent';
-import { setKeybindings, type Component } from '@mariozechner/pi-tui';
+import { initTheme } from '@earendil-works/pi-coding-agent';
+import { KeybindingsManager as AppKeybindingsManager } from '../node_modules/@earendil-works/pi-coding-agent/dist/core/keybindings.js';
+import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
+import { setKeybindings, type Component } from '@earendil-works/pi-tui';
 import webSearchExtension from '../extensions/searxng-search.ts';
 
 interface PreviewTheme {

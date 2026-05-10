@@ -14,10 +14,10 @@ import {
   formatSize,
   withFileMutationQueue,
   keyHint,
-} from '@mariozechner/pi-coding-agent';
+} from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { StringEnum } from '@mariozechner/pi-ai';
-import { Text } from '@mariozechner/pi-tui';
+import { StringEnum } from '@earendil-works/pi-ai';
+import { Text } from '@earendil-works/pi-tui';
 import { getDisplayHostname, summarizeHtmlText, summarizePlainText, truncateText, USER_AGENT } from './utils.js';
 
 interface SearxngConfig {

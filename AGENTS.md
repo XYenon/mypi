@@ -32,12 +32,12 @@ mypi is a **pi-package** project—an extension system for the pi framework (pi-
 
 ## Where to Look
 
-| Task             | Location                        | Notes                                                                                                   |
-| ---------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Add extension    | `extensions/*.ts`               | Export default function receives `ExtensionAPI`                                                         |
-| Configure        | `~/.config/agents/searxng.toml` | Shared with [skills/searxng-search](https://github.com/XYenon/agents/tree/master/skills/searxng-search) |
-| Type definitions | `@mariozechner/pi-coding-agent` | Peer dependency providing `ExtensionAPI`                                                                |
-| Validation       | `@sinclair/typebox`             | Runtime type validation for tool parameters                                                             |
+| Task             | Location                          | Notes                                                                                                   |
+| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Add extension    | `extensions/*.ts`                 | Export default function receives `ExtensionAPI`                                                         |
+| Configure        | `~/.config/agents/searxng.toml`   | Shared with [skills/searxng-search](https://github.com/XYenon/agents/tree/master/skills/searxng-search) |
+| Type definitions | `@earendil-works/pi-coding-agent` | Peer dependency providing `ExtensionAPI`                                                                |
+| Validation       | `@sinclair/typebox`               | Runtime type validation for tool parameters                                                             |
 
 ---
 
@@ -46,7 +46,7 @@ mypi is a **pi-package** project—an extension system for the pi framework (pi-
 Extensions export a default function that receives an `ExtensionAPI`:
 
 ```typescript
-import { ExtensionAPI } from '@mariozechner/pi-coding-agent';
+import { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { Type } from '@sinclair/typebox';
 
 export default function (pi: ExtensionAPI) {
@@ -162,8 +162,8 @@ default_max_results = 10
 
 **Peer Dependencies:**
 
-- `@mariozechner/pi-ai`: Extension API
-- `@mariozechner/pi-coding-agent`: Coding agent API
+- `@earendil-works/pi-ai`: Extension API
+- `@earendil-works/pi-coding-agent`: Coding agent API
 - `@sinclair/typebox`: Runtime type validation
 
 **Development:**
