@@ -57,7 +57,7 @@
     "pi-catppuccin": "github:XYenon/catppuccin-pi-coding-agent",
     "pi-hashline-edit": "^0.6.1",
     "pi-mcp-adapter": "^2.5.4",
-    "pi-powerline-footer": "^0.5.1",
+    "pi-powerline-footer": "^0.5.3",
     "pi-rewind-hook": "^1.8.4",
     "pi-skill-palette": "^1.1.0",
     "pi-subagents": "^0.24.0",
