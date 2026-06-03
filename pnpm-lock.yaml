@@ -39,8 +39,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       pi-subagents:
-        specifier: ^0.25.0
-        version: 0.25.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))
+        specifier: ^0.27.0
+        version: 0.27.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))
       pi-web-access:
         specifier: ^0.10.7
         version: 0.10.7
@@ -1861,8 +1861,8 @@ packages:
   pi-skill-palette@1.1.0:
     resolution: {integrity: sha512-z2ujY9bfTwM3FKSkYqi1j17YLgjtJwHCL3RjQZqYD2QaN2Eu8S4fVnmBhrylLAxkXNW610p2JAWrPBqf7KMrzQ==}
 
-  pi-subagents@0.25.0:
-    resolution: {integrity: sha512-HZK1RvT8zfQSzHRExhrnSKdhHmQeCxnpwjkf5dHQbWGcz9kk5C9Cb1rjElEM6CkOGp3eApMm3/HVi2EVYQX7OA==}
+  pi-subagents@0.27.0:
+    resolution: {integrity: sha512-hNrA1p2Vswb06spw6i3xRqISlBoLNg7f83wDl83ulO8bSz7iwR+wfTHVzr5i6n7p+1a+wbVI074jL0JKEyp6yw==}
     hasBin: true
     peerDependencies:
       '@earendil-works/pi-agent-core': '*'
@@ -4428,11 +4428,11 @@ snapshots:
 
   pi-skill-palette@1.1.0: {}
 
-  pi-subagents@0.25.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)):
+  pi-subagents@0.27.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)):
     dependencies:
       '@earendil-works/pi-tui': 0.74.2
       jiti: 2.7.0
-      typebox: 1.1.38
+      typebox: 1.1.39
     optionalDependencies:
       '@earendil-works/pi-agent-core': 0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-ai': 0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
