@@ -39,8 +39,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       pi-subagents:
-        specifier: ^0.27.0
-        version: 0.27.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))
+        specifier: ^0.28.0
+        version: 0.28.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))
       pi-web-access:
         specifier: ^0.10.7
         version: 0.10.7
@@ -118,8 +118,8 @@ packages:
     resolution: {integrity: sha512-I5dua8y1logE+Mx6r5kvI1tjM+XyC3H42KDCpEqmhrJfanor/x/AdOavyv3HnS4sBqUxx2IrjLP3ouEumjeTzA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-bedrock-runtime@3.1060.0':
-    resolution: {integrity: sha512-xP5mmoMCAasTh5hAh+Ncz+OVTnQ6lsY87GM5qNbcb5qwSbszpVp4NGsErAiVw7l/vtxeLaVDnn/R1Tt5TdUtRg==}
+  '@aws-sdk/client-bedrock-runtime@3.1061.0':
+    resolution: {integrity: sha512-mS1E12sTV7QFSWYnasazZo666CXoZUL6oD+r78jZ4cDIL2weLkwxHnWYzmPu6a/90+NpAGcFV/NO1yklPVqiSA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/core@3.974.13':
@@ -248,6 +248,10 @@ packages:
 
   '@aws-sdk/token-providers@3.1060.0':
     resolution: {integrity: sha512-6NZaMKkFhpaNiwLpHi1sZaYjidL/lCJE6ME6NxwA8gv9vQna+Kr0j4OFwVoz6tANRWM3WbGz6jiPsGX/Vkjwow==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/token-providers@3.1061.0':
+    resolution: {integrity: sha512-x3/oLcxi9H5Ol9uKQKExrsCSOk+xjKaMeErUAOOxRIuQAHMoJBkRdIZdD6QnryQeNu1lHB4stg83aHrJle7bbw==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/types@3.973.10':
@@ -1854,8 +1858,8 @@ packages:
   pi-skill-palette@1.1.0:
     resolution: {integrity: sha512-z2ujY9bfTwM3FKSkYqi1j17YLgjtJwHCL3RjQZqYD2QaN2Eu8S4fVnmBhrylLAxkXNW610p2JAWrPBqf7KMrzQ==}
 
-  pi-subagents@0.27.0:
-    resolution: {integrity: sha512-hNrA1p2Vswb06spw6i3xRqISlBoLNg7f83wDl83ulO8bSz7iwR+wfTHVzr5i6n7p+1a+wbVI074jL0JKEyp6yw==}
+  pi-subagents@0.28.0:
+    resolution: {integrity: sha512-EWgQphVqH7BWJFNiWdyOCa8uqwr/aWkm9OyhItFiIJfpmdY4mGUlZ2VK1z3UP6XfVAmidtGd0MsnyhuFTxAm0A==}
     hasBin: true
     peerDependencies:
       '@earendil-works/pi-agent-core': '*'
@@ -2345,7 +2349,7 @@ snapshots:
       '@smithy/types': 4.14.2
       tslib: 2.8.1
 
-  '@aws-sdk/client-bedrock-runtime@3.1060.0':
+  '@aws-sdk/client-bedrock-runtime@3.1061.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
@@ -2354,7 +2358,7 @@ snapshots:
       '@aws-sdk/eventstream-handler-node': 3.972.19
       '@aws-sdk/middleware-eventstream': 3.972.15
       '@aws-sdk/middleware-websocket': 3.972.25
-      '@aws-sdk/token-providers': 3.1060.0
+      '@aws-sdk/token-providers': 3.1061.0
       '@aws-sdk/types': 3.973.10
       '@smithy/core': 3.24.6
       '@smithy/fetch-http-handler': 5.4.6
@@ -2669,6 +2673,15 @@ snapshots:
       tslib: 2.8.1
 
   '@aws-sdk/token-providers@3.1060.0':
+    dependencies:
+      '@aws-sdk/core': 3.974.17
+      '@aws-sdk/nested-clients': 3.997.15
+      '@aws-sdk/types': 3.973.10
+      '@smithy/core': 3.24.6
+      '@smithy/types': 4.14.3
+      tslib: 2.8.1
+
+  '@aws-sdk/token-providers@3.1061.0':
     dependencies:
       '@aws-sdk/core': 3.974.17
       '@aws-sdk/nested-clients': 3.997.15
@@ -3052,7 +3065,7 @@ snapshots:
   '@mariozechner/pi-ai@0.73.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)':
     dependencies:
       '@anthropic-ai/sdk': 0.91.1(zod@4.4.3)
-      '@aws-sdk/client-bedrock-runtime': 3.1060.0
+      '@aws-sdk/client-bedrock-runtime': 3.1061.0
       '@google/genai': 1.52.0(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))
       '@mistralai/mistralai': 2.2.5
       chalk: 5.6.2
@@ -4405,7 +4418,7 @@ snapshots:
 
   pi-skill-palette@1.1.0: {}
 
-  pi-subagents@0.27.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)):
+  pi-subagents@0.28.0(@earendil-works/pi-agent-core@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-ai@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.75.5(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)):
     dependencies:
       '@earendil-works/pi-tui': 0.74.2
       jiti: 2.7.0
