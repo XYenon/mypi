@@ -24,8 +24,8 @@ importers:
         specifier: github:XYenon/catppuccin-pi-coding-agent
         version: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e
       pi-hashline-edit:
-        specifier: ^0.6.1
-        version: 0.6.1(@earendil-works/pi-ai@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-tui@0.78.1)(@sinclair/typebox@0.34.49)
+        specifier: ^0.7.0
+        version: 0.7.0(@earendil-works/pi-ai@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-tui@0.78.1)(@sinclair/typebox@0.34.49)
       pi-mcp-adapter:
         specifier: ^2.9.0
         version: 2.9.0(ws@8.21.0)(zod@4.4.3)
@@ -1712,8 +1712,8 @@ packages:
     resolution: {tarball: https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e}
     version: 0.1.0
 
-  pi-hashline-edit@0.6.1:
-    resolution: {integrity: sha512-8Y8IMosxhVlawWjB/91aZSV6faulmuZmy03SKFr1lwM/yw2b5pJXn1HluVT7Tojvos4xqEjnTND0uZw4Pz0xMQ==}
+  pi-hashline-edit@0.7.0:
+    resolution: {integrity: sha512-bkfrRH8L8j3UCaaPBLnW4cKGtF4SqeDhhBbpBGTeEjR11+Y6gsMC4DUy1NCDqEtmwwaqIz0McI3hEWymjtIzZw==}
     peerDependencies:
       '@earendil-works/pi-ai': '>=0.74.0'
       '@earendil-works/pi-coding-agent': '>=0.74.0'
@@ -4125,7 +4125,7 @@ snapshots:
 
   pi-catppuccin@https://codeload.github.com/XYenon/catppuccin-pi-coding-agent/tar.gz/625313dce13c38d00e1f22ae2d8b39d9be25d51e: {}
 
-  pi-hashline-edit@0.6.1(@earendil-works/pi-ai@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-tui@0.78.1)(@sinclair/typebox@0.34.49):
+  pi-hashline-edit@0.7.0(@earendil-works/pi-ai@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-coding-agent@0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3))(@earendil-works/pi-tui@0.78.1)(@sinclair/typebox@0.34.49):
     dependencies:
       '@earendil-works/pi-ai': 0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
       '@earendil-works/pi-coding-agent': 0.78.1(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
