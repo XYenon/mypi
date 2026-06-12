@@ -53,7 +53,7 @@
   "dependencies": {
     "mitsupi": "^1.6.0",
     "pi-catppuccin": "github:XYenon/catppuccin-pi-coding-agent",
-    "pi-hashline-edit": "^0.6.1",
+    "pi-hashline-edit": "^0.7.0",
     "pi-mcp-adapter": "^2.9.0",
     "pi-rewind-hook": "^1.8.4",
     "pi-skill-palette": "^1.1.0",
